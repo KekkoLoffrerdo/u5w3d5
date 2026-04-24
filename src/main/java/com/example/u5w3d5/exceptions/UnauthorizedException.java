@@ -1,4 +1,7 @@
 package com.example.u5w3d5.exceptions;
 
-public class UnauthorizedException {
+public class UnauthorizedException extends RuntimeException {
+    public UnauthorizedException(String message) {
+        super(message);
+    }
 }
