@@ -1,4 +1,4 @@
 package com.example.u5w3d5.payloads;
 
-public class LoginDTO {
+public record LoginDTO(String email, String password) {
 }
