@@ -1,5 +1,6 @@
 package com.example.u5w3d5.security;
 
+import com.example.u5w3d5.exceptions.UnauthorizedException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,11 +13,9 @@ import java.util.UUID;
 public class TokenTools {
 
     private final String secret;
-
     public TokenTools(@Value("${jwt.secret}") String secret) {
         this.secret = secret;
     }
-
     public String generateToken(UUID userId) {
         return Jwts.builder()
                 .issuedAt(new Date(System.currentTimeMillis()))
@@ -25,22 +24,28 @@ public class TokenTools {
                 .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
                 .compact();
     }
-
     public void verifyToken(String token) {
-        Jwts.parser()
-                .verifyWith(Keys.hmacShaKeyFor(secret.getBytes()))
-                .build()
-                .parse(token);
+        try {
+            Jwts.parser()
+                    .verifyWith(Keys.hmacShaKeyFor(secret.getBytes()))
+                    .build()
+                    .parse(token);
+        } catch (Exception ex) {
+            throw new UnauthorizedException("Problemi col token! Effettua di nuovo il login!");
+        }
     }
-
     public UUID extractIdFromToken(String token) {
-        return UUID.fromString(
-                Jwts.parser()
-                        .verifyWith(Keys.hmacShaKeyFor(secret.getBytes()))
-                        .build()
-                        .parseSignedClaims(token)
-                        .getPayload()
-                        .getSubject()
-        );
+        try {
+            return UUID.fromString(
+                    Jwts.parser()
+                            .verifyWith(Keys.hmacShaKeyFor(secret.getBytes()))
+                            .build()
+                            .parseSignedClaims(token)
+                            .getPayload()
+                            .getSubject()
+            );
+        } catch (Exception ex) {
+            throw new UnauthorizedException("Problemi col token! Effettua di nuovo il login!");
+        }
     }
 }

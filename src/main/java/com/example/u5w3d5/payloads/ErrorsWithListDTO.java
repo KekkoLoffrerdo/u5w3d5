@@ -1,4 +1,8 @@
 package com.example.u5w3d5.payloads;
 
-public class ErrorsWithListDTO {
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+public record ErrorsWithListDTO(String message, LocalDateTime timestamp, List<String> errors) {
 }
